@@ -13,28 +13,30 @@ public class PostEffectOutline : MonoBehaviour
     private Shader _drawSimple;
 
     void Start() {
+        // Find shader
         _postOutline = Shader.Find("Custom/PostOutline");
         _drawSimple = Shader.Find("Custom/DrawSimple");
+
+        // Get attached camera
         _attachedCamera = GetComponent<Camera>();
+
+        // Setup temp cam
         _tempCam = new GameObject().AddComponent<Camera>();
         _tempCam.enabled = false;
+        _tempCam.transform.SetParent(_attachedCamera.transform);
+        _tempCam.CopyFrom(_attachedCamera);
+        _tempCam.clearFlags = CameraClearFlags.Color;
+        _tempCam.backgroundColor = Color.black;
+        _tempCam.cullingMask = 1 << LayerMask.NameToLayer(_layerName);
+
+        // Create our post outline material
         _postMat = new Material(_postOutline);
     }
 
     void OnRenderImage(RenderTexture source, RenderTexture destination) {
-        Graphics.Blit(source, destination);
-
-        // Setup temp cam
-        _tempCam.CopyFrom(_attachedCamera);
-        _tempCam.clearFlags = CameraClearFlags.Color;
-        _tempCam.backgroundColor = Color.black;
-
         // Set the camera's target texture when rendering
         var rendTex = RenderTexture.GetTemporary(source.width, source.height);
         _tempCam.targetTexture = rendTex;
-
-        // Cull any layer that isn't the outline
-        _tempCam.cullingMask = 1 << LayerMask.NameToLayer(_layerName);
 
         // Set scene texture
         _postMat.SetTexture("_SceneTex", source);
