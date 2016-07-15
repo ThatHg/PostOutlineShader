@@ -3,6 +3,7 @@ public class PostEffectOutline : MonoBehaviour
 {
     public Color _outlineColor = Color.red;
     public float _outlineWidth = 5f;
+    public string _layerName = "Outline";
 
     private Camera _attachedCamera;
     private Camera _tempCam;
@@ -33,7 +34,7 @@ public class PostEffectOutline : MonoBehaviour
         _tempCam.targetTexture = rendTex;
 
         // Cull any layer that isn't the outline
-        _tempCam.cullingMask = 1 << LayerMask.NameToLayer("Outline");
+        _tempCam.cullingMask = 1 << LayerMask.NameToLayer(_layerName);
 
         // Set scene texture
         _postMat.SetTexture("_SceneTex", source);
