@@ -100,7 +100,7 @@ Shader "Custom/PostOutline" {
                 o.pos=mul(UNITY_MATRIX_MVP,v.vertex);
  
                 //Also, we need to fix the UVs to match our screen space coordinates. There is a Unity define for this that should normally be used.
-                o.uvs = o.pos.xy / 2 + 0.5;
+                o.uvs = o.pos.xy * 0.5 + 0.5;
                  
                 return o;
             }
@@ -134,9 +134,8 @@ Shader "Custom/PostOutline" {
                     ).r/NumberOfIterations;
                 }
  
- 
                 //this is alpha blending, but we can't use HW blending unless we make a third pass, so this is probably cheaper.
-                half4 outcolor=ColorIntensityInRadius*_Color*2+(1-ColorIntensityInRadius)*tex2D(_SceneTex,float2(i.uvs.x,i.uvs.y));
+                half4 outcolor=ColorIntensityInRadius*_Color*2+ (1 - ColorIntensityInRadius)*tex2D(_SceneTex,float2(i.uvs.x,i.uvs.y));
                 return outcolor;
             }
             ENDCG
